@@ -20,7 +20,8 @@ describe('Scoreboard', () => {
   test('.add() to start a new match with 0-0 scoreline', () => {
     expect(scoreboard.score.length).toBe(0);
     scoreboard.start('Mexico', 'Canada');
-    expect(scoreboard.score.length).toBe(1);
+    expect(scoreboard.score.length).toBe(0);
+    expect(scoreboard.currentMatch).not.toBeNull();
     expect(scoreboard.displayCurrentScore()).toBe('Mexico 0 - 0 Canada');
   });
 
@@ -32,7 +33,8 @@ describe('Scoreboard', () => {
   test('.updateScore to update the current score to 1-2 for home-away teams', () => {
     scoreboard.start('Mexico', 'Canada');
     scoreboard.updateScore(1, 2);
-    expect(scoreboard.score.length).toBe(1);
+    expect(scoreboard.score.length).toBe(0);
+    expect(scoreboard.currentMatch).not.toBeNull();
     expect(scoreboard.displayCurrentScore()).toBe('Mexico 1 - 2 Canada');
   });
 
@@ -59,9 +61,15 @@ describe('Scoreboard', () => {
 
   test('.finish to finish up the ongoing match', () => {
     scoreboard.start('Mexico', 'Canada');
+    expect(scoreboard.currentMatch).not.toBeNull();
     expect(scoreboard.displayCurrentScore()).toBe('Mexico 0 - 0 Canada');
     scoreboard.finish();
     expect(scoreboard.score.length).toBe(1);
+    expect(scoreboard.currentMatch).toBeNull();
     expect(scoreboard.displayCurrentScore()).toBe('There are no teams playing at the moment.');
+  });
+
+  test('.getSummary to return an empty string if no matches were played', () => {
+    expect(scoreboard.getSummary()).toBe('');
   });
 });

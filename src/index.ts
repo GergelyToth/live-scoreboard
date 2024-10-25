@@ -4,28 +4,26 @@ interface Match {
   awayName: string,
   awayScore: number,
   created: Date,
-  isLive: boolean,
 };
 
 const NO_MATCH_ERROR = 'No matches are currently in progress';
 
 class Scoreboard {
   private score: Match[] = [];
+  private currentMatch: Match | null = null;
 
   start(homeName: string, awayName: string): void {
-    this.score.push({
+    this.currentMatch = {
       homeName,
       homeScore: 0,
       awayName,
       awayScore: 0,
       created: new Date(),
-      isLive: true,
-    });
+    };
   }
 
   updateScore(homeScore: number, awayScore: number): void {
-    const match = this.getCurrentMatch();
-    if (!match) {
+    if (!this.currentMatch) {
       throw new Error(NO_MATCH_ERROR);
     }
 
@@ -33,31 +31,33 @@ class Scoreboard {
       throw new Error('Invalid score');
     }
 
-    match.homeScore = Math.trunc(homeScore);
-    match.awayScore = Math.trunc(awayScore);
+    this.currentMatch.homeScore = Math.trunc(homeScore);
+    this.currentMatch.awayScore = Math.trunc(awayScore);
   }
 
   finish(): void {
-    const match = this.getCurrentMatch();
-    if (!match) {
+    if (!this.currentMatch) {
       throw new Error(NO_MATCH_ERROR);
     }
 
-    match.isLive = false;
-  }
-
-  getCurrentMatch() {
-    return this.score.find((match) => match.isLive);
+    this.score.push(this.currentMatch);
+    this.currentMatch = null;
   }
 
   displayCurrentScore(): string {
-    const match = this.getCurrentMatch();
-
-    if (!match) {
+    if (!this.currentMatch) {
       return 'There are no teams playing at the moment.';
     }
 
-    return `${match.homeName} ${match.homeScore} - ${match.awayScore} ${match.awayName}`;
+    const {homeName, homeScore, awayName, awayScore} = this.currentMatch;
+
+    return `${homeName} ${homeScore} - ${awayScore} ${awayName}`;
+  }
+
+  getSummary() {
+    if (this.score.length === 0) {
+      return '';
+    }
   }
 }
 
