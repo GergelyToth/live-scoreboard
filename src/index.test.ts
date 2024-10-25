@@ -35,4 +35,20 @@ describe('Scoreboard', () => {
     expect(scoreboard.score.length).toBe(1);
     expect(scoreboard.displayCurrentScore()).toBe('Mexico 1 - 2 Canada');
   });
+
+  test('.updateScore to throw an error if home score is a negative number', () => {
+    scoreboard.start('Mexico', 'Canada');
+    expect(() => scoreboard.updateScore(-1, 2)).toThrow('Invalid score');
+  });
+
+  test('.updateScore to throw an error if away score is a negative number', () => {
+    scoreboard.start('Mexico', 'Canada');
+    expect(() => scoreboard.updateScore(1, -2)).toThrow('Invalid score');
+  });
+
+  test('.updateScore to truncate any fractional digits if the provided scores are floating point numbers', () => {
+    scoreboard.start('Mexico', 'Canada');
+    scoreboard.updateScore(1.4, 2.6);
+    expect(scoreboard.displayCurrentScore()).toBe('Mexico 1 - 2 Canada');
+  })
 });

@@ -27,8 +27,12 @@ class Scoreboard {
       throw new Error('No matches are currently in progress');
     }
 
-    match.homeScore = homeScore;
-    match.awayScore = awayScore;
+    if (homeScore < 0 || awayScore < 0) {
+      throw new Error('Invalid score');
+    }
+
+    match.homeScore = Math.trunc(homeScore);
+    match.awayScore = Math.trunc(awayScore);
   }
 
   getCurrentMatch() {
