@@ -54,7 +54,7 @@ class Scoreboard {
 
   private getScoreForMatch(match: Match): string {
     const {homeName, homeScore, awayName, awayScore} = match;
-    return `${homeName} ${homeScore} - ${awayScore} ${awayName}`;
+    return `${homeName} ${homeScore} - ${awayName} ${awayScore}`;
   }
 
   getSummary(): string {

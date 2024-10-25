@@ -22,7 +22,7 @@ describe('Scoreboard', () => {
     scoreboard.start('Mexico', 'Canada');
     expect(scoreboard.score.length).toBe(0);
     expect(scoreboard.currentMatch).not.toBeNull();
-    expect(scoreboard.display()).toBe('Mexico 0 - 0 Canada');
+    expect(scoreboard.display()).toBe('Mexico 0 - Canada 0');
   });
 
   test('.updateScore to fail if there are no ongoing match', () => {
@@ -35,7 +35,7 @@ describe('Scoreboard', () => {
     scoreboard.update(1, 2);
     expect(scoreboard.score.length).toBe(0);
     expect(scoreboard.currentMatch).not.toBeNull();
-    expect(scoreboard.display()).toBe('Mexico 1 - 2 Canada');
+    expect(scoreboard.display()).toBe('Mexico 1 - Canada 2');
   });
 
   test('.updateScore to throw an error if home score is a negative number', () => {
@@ -51,7 +51,7 @@ describe('Scoreboard', () => {
   test('.updateScore to truncate any fractional digits if the provided scores are floating point numbers', () => {
     scoreboard.start('Mexico', 'Canada');
     scoreboard.update(1.4, 2.6);
-    expect(scoreboard.display()).toBe('Mexico 1 - 2 Canada');
+    expect(scoreboard.display()).toBe('Mexico 1 - Canada 2');
   });
 
   test('.finish to throw an error if there is no ongoing matches', () => {
@@ -62,7 +62,7 @@ describe('Scoreboard', () => {
   test('.finish to finish up the ongoing match', () => {
     scoreboard.start('Mexico', 'Canada');
     expect(scoreboard.currentMatch).not.toBeNull();
-    expect(scoreboard.display()).toBe('Mexico 0 - 0 Canada');
+    expect(scoreboard.display()).toBe('Mexico 0 - Canada 0');
     scoreboard.finish();
     expect(scoreboard.score.length).toBe(1);
     expect(scoreboard.currentMatch).toBeNull();
@@ -77,7 +77,7 @@ describe('Scoreboard', () => {
     scoreboard.start('Mexico', 'Canada');
     scoreboard.update(1, 2);
     scoreboard.finish();
-    expect(scoreboard.getSummary()).toBe('1. Mexico 1 - 2 Canada');
+    expect(scoreboard.getSummary()).toBe('1. Mexico 1 - Canada 2');
   });
 
   test('.getSummary to display two teams ordered by the sum of goals', () => {
@@ -88,7 +88,7 @@ describe('Scoreboard', () => {
     scoreboard.start('Spain', 'Brazil');
     scoreboard.update(10, 2);
     scoreboard.finish();
-    expect(scoreboard.getSummary()).toBe(`1. Spain 10 - 2 Brazil\n2. Mexico 1 - 2 Canada`);
+    expect(scoreboard.getSummary()).toBe(`1. Spain 10 - Brazil 2\n2. Mexico 1 - Canada 2`);
   });
 
   test('.getSummary to order teams by most recent if sum of goals are equal', () => {
@@ -108,7 +108,7 @@ describe('Scoreboard', () => {
     scoreboard.update(6, 6);
     scoreboard.finish();
 
-    expect(scoreboard.getSummary()).toBe(`1. Uruguay 6 - 6 Italy\n2. Spain 10 - 2 Brazil\n3. Mexico 1 - 2 Canada`);
+    expect(scoreboard.getSummary()).toBe(`1. Uruguay 6 - Italy 6\n2. Spain 10 - Brazil 2\n3. Mexico 1 - Canada 2`);
 
     // cleanup
     vi.useRealTimers();
@@ -122,7 +122,7 @@ describe('Scoreboard', () => {
     scoreboard.start('Spain', 'Brazil');
     scoreboard.update(10, 2);
 
-    expect(scoreboard.getSummary()).toBe('1. Mexico 1 - 2 Canada');
+    expect(scoreboard.getSummary()).toBe('1. Mexico 1 - Canada 2');
   });
 
   test('.getSummary should display a complex table properly', () => {
@@ -153,11 +153,11 @@ describe('Scoreboard', () => {
     scoreboard.finish();
 
     expect(scoreboard.getSummary()).toBe(
-`1. Uruguay 6 - 6 Italy
-2. Spain 10 - 2 Brazil
-3. Mexico 0 - 5 Canada
-4. Argentina 3 - 1 Australia
-5. Germany 2 - 2 France`
+`1. Uruguay 6 - Italy 6
+2. Spain 10 - Brazil 2
+3. Mexico 0 - Canada 5
+4. Argentina 3 - Australia 1
+5. Germany 2 - France 2`
     );
   });
 });
