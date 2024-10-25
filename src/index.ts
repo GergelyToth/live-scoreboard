@@ -22,7 +22,7 @@ class Scoreboard {
     };
   }
 
-  updateScore(homeScore: number, awayScore: number): void {
+  update(homeScore: number, awayScore: number): void {
     if (!this.currentMatch) {
       throw new Error(NO_MATCH_ERROR);
     }
@@ -44,20 +44,40 @@ class Scoreboard {
     this.currentMatch = null;
   }
 
-  displayCurrentScore(): string {
+  display(): string {
     if (!this.currentMatch) {
       return 'There are no teams playing at the moment.';
     }
 
-    const {homeName, homeScore, awayName, awayScore} = this.currentMatch;
+    return this.getScoreForMatch(this.currentMatch);
+  }
 
+  private getScoreForMatch(match: Match): string {
+    const {homeName, homeScore, awayName, awayScore} = match;
     return `${homeName} ${homeScore} - ${awayScore} ${awayName}`;
   }
 
-  getSummary() {
+  getSummary(): string {
     if (this.score.length === 0) {
       return '';
     }
+
+    const sum = (numbers: number[]): number => numbers.reduce((a, b) => a + b, 0);
+
+    // sort the scores by their sum of goals and most recent matches
+    const summary = [...this.score];
+    summary.sort((a, b) => {
+      // optimization could be made to store the sum of goals in the database once the match has concluded
+      const goalsA = sum([a.homeScore, a.awayScore]);
+      const goalsB = sum([b.homeScore, b.awayScore]);
+      const recent = b.created.getTime() - a.created.getTime();
+
+      return goalsB - goalsA || recent;
+    });
+
+    return summary
+      .map((match, index) => `${index + 1}. ${this.getScoreForMatch(match)}`)
+      .join("\n");
   }
 }
 
