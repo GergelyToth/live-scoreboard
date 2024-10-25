@@ -10,7 +10,7 @@ interface Match {
 class Scoreboard {
   private score: Match[] = [];
 
-  start(homeName: string, awayName: string) {
+  start(homeName: string, awayName: string): void {
     this.score.push({
       homeName,
       homeScore: 0,
@@ -21,8 +21,22 @@ class Scoreboard {
     });
   }
 
-  displayCurrentMatch(): string {
-    const match =  this.score.find((match) => match.isLive);
+  updateScore(homeScore: number, awayScore: number): void {
+    const match = this.getCurrentMatch();
+    if (!match) {
+      throw new Error('No matches are currently in progress');
+    }
+
+    match.homeScore = homeScore;
+    match.awayScore = awayScore;
+  }
+
+  getCurrentMatch() {
+    return this.score.find((match) => match.isLive);
+  }
+
+  displayCurrentScore(): string {
+    const match = this.getCurrentMatch();
 
     if (!match) {
       return 'There are no teams playing at the moment.';
