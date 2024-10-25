@@ -17,13 +17,18 @@ describe('Scoreboard', () => {
     expect(scoreboard.display()).toBe('There are no teams playing at the moment.')
   });
 
-  test('.add() to start a new match with 0-0 scoreline', () => {
+  test('.add to start a new match with 0-0 scoreline', () => {
     expect(scoreboard.score.length).toBe(0);
     scoreboard.start('Mexico', 'Canada');
     expect(scoreboard.score.length).toBe(0);
     expect(scoreboard.currentMatch).not.toBeNull();
     expect(scoreboard.display()).toBe('Mexico 0 - Canada 0');
   });
+
+  test('.add to throw an error if a match is still in progress', () => {
+    scoreboard.start('Mexico', 'Canada');
+    expect(() => scoreboard.start('Spain', 'Brazil')).toThrow('There is a match still in progress');
+  })
 
   test('.updateScore to fail if there are no ongoing match', () => {
     expect(scoreboard.score.length).toBe(0);
@@ -54,6 +59,18 @@ describe('Scoreboard', () => {
     expect(scoreboard.display()).toBe('Mexico 1 - Canada 2');
   });
 
+  test('.updateScore to be called multiple times', () => {
+    scoreboard.start('Mexico', 'Canada');
+    scoreboard.update(1, 2);
+    expect(scoreboard.display()).toBe('Mexico 1 - Canada 2');
+
+    scoreboard.update(3, 2);
+    expect(scoreboard.display()).toBe('Mexico 3 - Canada 2');
+
+    scoreboard.update(3, 6);
+    expect(scoreboard.display()).toBe('Mexico 3 - Canada 6');
+  });
+
   test('.finish to throw an error if there is no ongoing matches', () => {
     expect(scoreboard.score.length).toBe(0);
     expect(() => scoreboard.finish()).toThrow('No matches are currently in progress');
@@ -63,11 +80,18 @@ describe('Scoreboard', () => {
     scoreboard.start('Mexico', 'Canada');
     expect(scoreboard.currentMatch).not.toBeNull();
     expect(scoreboard.display()).toBe('Mexico 0 - Canada 0');
+
     scoreboard.finish();
     expect(scoreboard.score.length).toBe(1);
     expect(scoreboard.currentMatch).toBeNull();
     expect(scoreboard.display()).toBe('There are no teams playing at the moment.');
   });
+
+  test('.finish to throw an error if called twice consecutively', () => {
+    scoreboard.start('Mexico', 'Canada');
+    scoreboard.finish();
+    expect(() => scoreboard.finish()).toThrow('No matches are currently in progress');
+  })
 
   test('.getSummary to return an empty string if no matches were played', () => {
     expect(scoreboard.getSummary()).toBe('');

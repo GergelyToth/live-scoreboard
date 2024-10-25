@@ -13,6 +13,10 @@ class Scoreboard {
   private currentMatch: Match | null = null;
 
   start(homeName: string, awayName: string): void {
+    if (this.currentMatch !== null) {
+      throw new Error('There is a match still in progress');
+    }
+
     this.currentMatch = {
       homeName,
       homeScore: 0,
