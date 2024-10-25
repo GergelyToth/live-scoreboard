@@ -7,6 +7,8 @@ interface Match {
   isLive: boolean,
 };
 
+const NO_MATCH_ERROR = 'No matches are currently in progress';
+
 class Scoreboard {
   private score: Match[] = [];
 
@@ -24,7 +26,7 @@ class Scoreboard {
   updateScore(homeScore: number, awayScore: number): void {
     const match = this.getCurrentMatch();
     if (!match) {
-      throw new Error('No matches are currently in progress');
+      throw new Error(NO_MATCH_ERROR);
     }
 
     if (homeScore < 0 || awayScore < 0) {
@@ -33,6 +35,15 @@ class Scoreboard {
 
     match.homeScore = Math.trunc(homeScore);
     match.awayScore = Math.trunc(awayScore);
+  }
+
+  finish(): void {
+    const match = this.getCurrentMatch();
+    if (!match) {
+      throw new Error(NO_MATCH_ERROR);
+    }
+
+    match.isLive = false;
   }
 
   getCurrentMatch() {

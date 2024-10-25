@@ -50,5 +50,18 @@ describe('Scoreboard', () => {
     scoreboard.start('Mexico', 'Canada');
     scoreboard.updateScore(1.4, 2.6);
     expect(scoreboard.displayCurrentScore()).toBe('Mexico 1 - 2 Canada');
-  })
+  });
+
+  test('.finish to throw an error if there is no ongoing matches', () => {
+    expect(scoreboard.score.length).toBe(0);
+    expect(() => scoreboard.finish()).toThrow('No matches are currently in progress');
+  });
+
+  test('.finish to finish up the ongoing match', () => {
+    scoreboard.start('Mexico', 'Canada');
+    expect(scoreboard.displayCurrentScore()).toBe('Mexico 0 - 0 Canada');
+    scoreboard.finish();
+    expect(scoreboard.score.length).toBe(1);
+    expect(scoreboard.displayCurrentScore()).toBe('There are no teams playing at the moment.');
+  });
 });
